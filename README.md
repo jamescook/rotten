@@ -13,8 +13,14 @@
     # list upcoming movies
     Rotten::Movie.upcoming
 
+    # list movies in theatres now
+    Rotten::Movie.in_theatres
+
     # list movies opening this week
     Rotten::Movie.opening
+
+    # list movies coming to dvd this week
+    Rotten::Movie.dvd_release
 
 ### Features
 - Movie search

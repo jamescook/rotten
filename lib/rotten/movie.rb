@@ -12,6 +12,15 @@ module Rotten
         fetch "lists/movies/upcoming", options
       end
 
+      def dvd_releases options={}
+        fetch "lists/dvds/new_releases", options
+      end
+
+      def in_theaters options={}
+        fetch "lists/movies/in_theaters", options
+      end
+      alias_method :in_theatres, :in_theaters
+
       def search phrase, options={}
         options.delete :q
         options[:q] = phrase

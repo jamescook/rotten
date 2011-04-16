@@ -3,9 +3,9 @@ require "spec_helper"
 describe Rotten::Movie do
   context "#cast" do
     before :each do
-      simulate_movie_search
+      simulate "movies/search", "search.json", :q => "There Will Be Blood"
       @movie = Rotten::Movie.search("There Will Be Blood").pop
-      simulate_full_cast(@movie)
+      simulate "movies/#{@movie.id}/cast", "cast.json"
     end
 
     context "sent :full" do
@@ -18,9 +18,9 @@ describe Rotten::Movie do
 
   context "#reviews" do
     before :each do
-      simulate_movie_search
+      simulate "movies/search", "search.json", :q => "There Will Be Blood"
       @movie = Rotten::Movie.search("There Will Be Blood").pop
-      simulate_movie_reviews(@movie)
+      simulate "movies/#{@movie.id}/reviews", "reviews.json"
     end
 
     it "should return an array of Review" do
@@ -28,10 +28,30 @@ describe Rotten::Movie do
       @movie.reviews.shift.should be_an_instance_of(Rotten::Review)
     end
   end
+
+  context ".dvd_releases" do
+    before :each do
+      simulate "lists/dvds/new_releases", "movie_openings.json"
+    end
+
+    it "should return an array" do
+      Rotten::Movie.dvd_releases.should be_an_instance_of(Array)
+    end 
+  end
+
+  context ".in_theaters" do
+    before :each do
+      simulate "lists/movies/in_theaters", "movie_openings.json"
+    end
+
+    it "should return an array" do
+      Rotten::Movie.in_theatres.should be_an_instance_of(Array)
+    end 
+  end
   
   context ".opening" do
     before :each do
-      simulate_movie_openings
+      simulate "lists/movies/opening", "movie_openings.json"
     end
 
     it "should return an array" do
@@ -53,7 +73,7 @@ describe Rotten::Movie do
 
   context ".search" do
     before :each do
-      simulate_movie_search
+      simulate "movies/search", "search.json", :q => "There Will Be Blood"
     end
 
     it "should return an array" do
@@ -67,7 +87,7 @@ describe Rotten::Movie do
 
   context "when api_key is undefined" do
     it "should raise error" do
-      simulate_movie_openings
+      simulate "lists/movies/opening", "movie_openings.json"
       Rotten.api_key = nil
       lambda{ Rotten::Movie.opening }.should raise_error(Rotten::Api::UndefinedApiKeyError)
     end 
