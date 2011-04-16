@@ -5,18 +5,18 @@ module Rotten
 
     class << self
       def opening options={}
-        result = get "lists/movies/opening", options do |json|
-          extract_movie_info(json["movies"])
-        end
+        fetch "lists/movies/opening", options
+      end
+
+      def upcoming options={}
+        fetch "lists/movies/upcoming", options
       end
 
       def search phrase, options={}
         options.delete :q
         options[:q] = phrase
 
-        result = get "movies/search", options do |json|
-          extract_movie_info(json["movies"])
-        end
+        fetch "movies/search", options
       end
 
       def extract_movie_info json={}
@@ -24,6 +24,13 @@ module Rotten
           json.map{|m| extract_movie_info(m) }
         else
           return Movie.new(json)
+        end
+      end
+
+      protected
+      def fetch path, options, json_start="movies"
+        result = get(path, options) do |json|
+          extract_movie_info(json[json_start])
         end
       end
     end

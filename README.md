@@ -9,7 +9,13 @@
 ### Features
 - Movie search
 - Movies opening this week
+- Movies upcoming
 
 #### TODO
 - Implement all APIs
 - More tests
+
+#### Copyright
+
+Rotten is licensed under the MIT license.
+

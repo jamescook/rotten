@@ -3,14 +3,6 @@
 #   Rotten.api_key = 'your_key'
 #
 module Rotten
-  def api_key=(val)
-    @api_key = val
-  end
-
-  def api_key
-    @api_key
-  end
-  module_function :api_key=, :api_key
 
   module Api
     require "json"
@@ -60,5 +52,4 @@ module Rotten
       end
     end
   end
-
 end

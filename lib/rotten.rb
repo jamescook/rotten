@@ -6,4 +6,13 @@ module Rotten
   autoload :Actor, "rotten/actor"
   autoload :Cast,  "rotten/cast"
   autoload :Movie, "rotten/movie"
+
+  def api_key=(val)
+    @api_key = val
+  end
+
+  def api_key
+    @api_key
+  end
+  module_function :api_key=, :api_key
 end
