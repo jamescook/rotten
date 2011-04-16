@@ -8,6 +8,7 @@ module Rotten
   autoload :Cast,   "rotten/cast"
   autoload :Review, "rotten/review"
   autoload :Movie,  "rotten/movie"
+  autoload :Cache,  "rotten/cache"
 
   def api_key=(val)
     @api_key = val

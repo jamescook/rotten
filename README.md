@@ -10,23 +10,35 @@
     movie.reviews
     movie.cast
     
-    # list upcoming movies
+    # List upcoming movies
     Rotten::Movie.upcoming
 
-    # list movies in theatres now
+    # List movies in theatres now
     Rotten::Movie.in_theatres
 
-    # list movies opening this week
+    # List movies opening this week
     Rotten::Movie.opening
 
-    # list movies coming to dvd this week
+    # List movies coming to dvd this week
     Rotten::Movie.dvd_release
+
+    # Use a file cache (baked in)
+    Rotten::Movie.enable_cache!
+    Rotten::Movie.search "What about bob?"  # Hits API
+    Rotten::Movie.search "What about bob?"  # Hits on-disk cache
+
+    # Custom cache. Should respond to #read & #write. Recommended over included cache.
+    Rotten::Movie.cache= ActiveSupport::Cache::MemoryStore.new
+    Rotten::Movie.search "Blue Velvet"  # Hits API
+    Rotten::Movie.search "Blue Velvet"  # Hits MemoryStore
+
 
 ### Features
 - Movie search
 - Movies opening this week
 - Movies upcoming
 - Movie reviews
+- Caching
 
 #### TODO
 - Implement all APIs

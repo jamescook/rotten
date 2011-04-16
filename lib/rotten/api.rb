@@ -23,16 +23,60 @@ module Rotten
         '1.0'
       end
 
+      def use_cache?
+        @use_cache == true
+      end
+
+      def enable_cache!
+        @use_cache = true
+      end
+
+      def disable_cache!
+        @use_cache = false
+      end
+
+      def cache
+        @cache ||= Cache.new
+        @cache.store
+      end
+     
+      # Use your own cache, such as ActiveSupport::Cache::MemoryStore
+      def cache=(_cache)
+        enable_cache!
+        @cache = Cache.new :store => _cache
+      end
+
+      def get_from_cache url
+        if use_cache?
+          cache.read(url)
+        end
+      end
+
+      def write_to_cache url, data
+        cache.write(url, data) if use_cache?
+      end
+
       def get path, options={}
         if Rotten.api_key.nil?
           raise UndefinedApiKeyError, "Please define your API key with Rotten.api_key=(your_key)"
         end
 
-        url = url_for(path, options)
+        url    = url_for(path, options)
+        cached = get_from_cache(url)
+        if cached
+          puts "Using cache.."
+          if block_given?
+            return yield(cached)
+          else
+            return cached
+          end
+        end
+
         open( url ) do |response|
           data = JSON.parse(response.read)
+          write_to_cache url, data
           if block_given?
-            yield data
+            yield(data)
           else
             data
           end

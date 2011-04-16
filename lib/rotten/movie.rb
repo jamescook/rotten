@@ -32,7 +32,7 @@ module Rotten
         if json.is_a?(Array)
           json.map{|m| extract_movie_info(m) }
         else
-          return Movie.new(json)
+          Movie.new(json)
         end
       end
 
