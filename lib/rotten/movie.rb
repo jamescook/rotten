@@ -42,12 +42,29 @@ module Rotten
       title
     end
 
+    # Show cast 
+    #
+    # @param [Symbol #kind]  Defaults to :abridged, but can accept :full to retrieve full cast info.
+    # @return [Rotten::Cast]
+    def cast( kind = :abridged )
+      if kind == :full
+        Movie.get "movies/#{@id}/cast" do |json|
+          @cast = Cast.new json["cast"]
+        end
+        self.cast
+      else
+        @cast
+      end
+    end
+
     def process hash
       hash.each_pair{|k,v| instance_variable_set("@#{k}", v); self.class.send(:attr_reader, k.to_sym) }
       @cast   = Cast.new( @abridged_cast )
       @actors = @cast.actors
     end
 
+    # Fetch updated, potentially additional movie information
+    # @return [Rotten::Movie]
     def reload
       return false unless @id
       Movie.get "movies/#{@id}" do |json|

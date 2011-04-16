@@ -30,5 +30,20 @@ module Rotten
     def each &block
       yield @characters
     end
+
+    # Check if this cast includes other Cast or Actor
+    # @param [Object other] The target to be compared against.
+    # @return [Boolean]
+    def include?(other)
+      if other.is_a?(Cast)
+        names = @actors.map(&:name)
+        ( names - other.actors.map(&:name) ).empty?
+      elsif other.is_a?(Actor)
+        @actors.map(&:name).include?( other.name )
+      else
+        @characters.include?(other)
+      end
+    end
+
   end
 end

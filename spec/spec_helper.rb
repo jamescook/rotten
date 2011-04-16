@@ -19,6 +19,11 @@ RSpec.configure do |config|
                          :body => File.read( File.join(fixture_path, "search.json") ))
   end
 
+  def simulate_full_cast(movie)
+    FakeWeb.register_uri(:get, Rotten::Movie.url_for("movies/#{movie.id}/cast"),
+                         :body => File.read( File.join(fixture_path, "cast.json") ))
+  end
+
 
   config.before(:each) do
     Rotten.api_key = "1234567890"

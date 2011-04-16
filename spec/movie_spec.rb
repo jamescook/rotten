@@ -1,7 +1,22 @@
 require "spec_helper"
 
 describe Rotten::Movie do
-  context "#opening" do
+  context "#cast" do
+    before :each do
+      simulate_movie_search
+      @movie = Rotten::Movie.search("There Will Be Blood").pop
+      simulate_full_cast(@movie)
+    end
+
+    context "sent :full" do
+      it "should return an array" do
+        @movie.cast(:full).should be_an_instance_of(Rotten::Cast)
+        @movie.cast(:full).should include(@movie.cast(:abridged))
+      end 
+    end
+  end
+  
+  context ".opening" do
     before :each do
       simulate_movie_openings
     end
@@ -23,7 +38,7 @@ describe Rotten::Movie do
     end
   end
 
-  context "#search" do
+  context ".search" do
     before :each do
       simulate_movie_search
     end
