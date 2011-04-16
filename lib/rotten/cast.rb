@@ -6,7 +6,7 @@ module Rotten
     def initialize array=[]
       @actors     = Set.new
       @characters = []
-      process array
+      process (array || [])
     end
 
     def inspect
@@ -17,11 +17,9 @@ module Rotten
       @characters[index]
     end
 
-    def first; [0]; end
-
     def process array
       array.each do |hash|
-        actor      =  @actors.detect{|a| a.name == hash["name"] } || Actor.new(hash["name"])
+        actor      =  @actors.detect{|a| a.name == hash["name"] } || a=Actor.new; a.attributes=hash
         @actors     << actor
         @characters << [ actor, hash["characters"] ]
       end
@@ -44,6 +42,5 @@ module Rotten
         @characters.include?(other)
       end
     end
-
   end
 end

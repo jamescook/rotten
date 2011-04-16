@@ -1,5 +1,5 @@
 module Rotten
-  class Movie
+  class Movie < Entity
     class InvalidSearchQueryError < StandardError; end
     include Api
 
@@ -37,16 +37,25 @@ module Rotten
 
     attr_reader :actors, :cast
     def initialize movie_hash={}
+      super
       @actors = []
       process movie_hash
     end
 
     def inspect 
-      "<Rotten::Movie title='#{@title}' id='#{@id}'>"
+      "<Rotten::Movie title='#{title}' id='#{id}'>"
     end
 
     def to_s
       title
+    end
+
+    # Moview reviews
+    # @return [Array]
+    def reviews options={}
+      Movie.get "movies/#{id}/reviews", options do |json|
+        json["reviews"].map{|review| Review.from_json(review) }
+      end
     end
 
     # Show cast 
@@ -55,7 +64,7 @@ module Rotten
     # @return [Rotten::Cast]
     def cast( kind = :abridged )
       if kind == :full
-        Movie.get "movies/#{@id}/cast" do |json|
+        Movie.get "movies/#{id}/cast" do |json|
           @cast = Cast.new json["cast"]
         end
         self.cast
@@ -65,16 +74,16 @@ module Rotten
     end
 
     def process hash
-      hash.each_pair{|k,v| instance_variable_set("@#{k}", v); self.class.send(:attr_reader, k.to_sym) }
-      @cast   = Cast.new( @abridged_cast )
-      @actors = @cast.actors
+      attributes= hash
+      @cast       = Cast.new( abridged_cast )
+      @actors     = @cast.actors
     end
 
     # Fetch updated, potentially additional movie information
     # @return [Rotten::Movie]
     def reload
-      return false unless @id
-      Movie.get "movies/#{@id}" do |json|
+      return false unless id
+      Movie.get "movies/#{id}" do |json|
         process json 
       end
       self

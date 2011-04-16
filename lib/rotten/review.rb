@@ -1,4 +1,4 @@
 module Rotten
-  class Actor < Entity
+  class Review < Entity
   end
 end

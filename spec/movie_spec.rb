@@ -15,6 +15,19 @@ describe Rotten::Movie do
       end 
     end
   end
+
+  context "#reviews" do
+    before :each do
+      simulate_movie_search
+      @movie = Rotten::Movie.search("There Will Be Blood").pop
+      simulate_movie_reviews(@movie)
+    end
+
+    it "should return an array of Review" do
+      @movie.reviews.should be_an_instance_of(Array)
+      @movie.reviews.shift.should be_an_instance_of(Rotten::Review)
+    end
+  end
   
   context ".opening" do
     before :each do

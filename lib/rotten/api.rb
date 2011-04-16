@@ -25,7 +25,7 @@ module Rotten
 
       def get path, options={}
         if Rotten.api_key.nil?
-          raise UndefinedApiKeyError, "Please define your API key with #{self}.api_key=(your_key)"
+          raise UndefinedApiKeyError, "Please define your API key with Rotten.api_key=(your_key)"
         end
 
         url = url_for(path, options)
