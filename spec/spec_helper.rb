@@ -10,6 +10,13 @@ RSpec.configure do |config|
   end
 
   def simulate(path, fixture, options={})
+    if options.member?(:page_limit)
+      if options[:page_limit].nil?
+        options.delete :page_limit
+      end
+    else
+      options.merge!(:page_limit => 50)
+    end
     FakeWeb.register_uri(:get, Rotten::Movie.url_for(path, options),
                          :body => File.read( File.join(fixture_path, fixture)) )
   end

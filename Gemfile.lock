@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rotten (0.3.0)
+    rotten (0.4.0)
 
 GEM
   remote: http://rubygems.org/

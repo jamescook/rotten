@@ -11,6 +11,10 @@ module Rotten
 
     def self.included(base)
       base.send :extend,  ClassMethods
+      base.send :include, InstanceMethods
+    end
+
+    module InstanceMethods
     end
 
     module ClassMethods
@@ -21,6 +25,10 @@ module Rotten
 
       def version
         '1.0'
+      end
+
+      def maximum_per_page
+        '50'
       end
 
       def use_cache?
@@ -64,7 +72,6 @@ module Rotten
         url    = url_for(path, options)
         cached = get_from_cache(url)
         if cached
-          puts "Using cache.."
           if block_given?
             return yield(cached)
           else
@@ -88,11 +95,28 @@ module Rotten
         
         params = ''
         if options.keys.any?
-          options.each_pair{|k,v| params << "#{k}=#{URI.escape(v)}&" }
+          options.each_pair{|k,v| params << "#{k}=#{URI.escape(v.to_s)}&" }
         end
         params.chomp! "&" if params
 
         "#{endpoint}/#{path}.json?apikey=#{Rotten.api_key}&#{params}"
+      end
+
+      def extract_info klass, json={}
+        if json.is_a?(Array)
+          json.map{|m| extract_info(klass, m) }
+        else
+          klass.new(json)
+        end
+      end
+
+      protected
+      def warn_about_unknown_options hash
+        known   = [:page_limit, :page, :q, :country, :review_type, :apikey]
+        unknown = hash.keys.map{|k| k.to_sym} - known
+        if unknown.any?
+          puts "[rotten] Unknown API options: #{unknown.join(',')}."
+        end
       end
     end
   end

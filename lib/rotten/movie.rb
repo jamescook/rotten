@@ -28,18 +28,22 @@ module Rotten
         fetch "movies/search", options
       end
 
-      def extract_movie_info json={}
-        if json.is_a?(Array)
-          json.map{|m| extract_movie_info(m) }
-        else
-          Movie.new(json)
-        end
+      def find_first phrase, options={}
+        (search phrase, options.merge(:page_limit => 1))[0]
       end
 
       protected
       def fetch path, options, json_start="movies"
+        warn_about_unknown_options(options)
+        options.merge!(:page_limit => maximum_per_page) unless options.key?(:page_limit)
+
+        if options.key?(:page_limit) && options[:page_limit].to_i > 50
+          puts "[rotten] Page limits higher than 50 may not work."
+        end
+
         result = get(path, options) do |json|
-          extract_movie_info(json[json_start])
+          #extract_info(Movie, json[json_start])
+          SearchResult.new( :path => path, :api_options => options, :class => Movie, :json => json )
         end
       end
     end
@@ -62,8 +66,9 @@ module Rotten
     # Moview reviews
     # @return [Array]
     def reviews options={}
-      Movie.get "movies/#{id}/reviews", options do |json|
-        json["reviews"].map{|review| Review.from_json(review) }
+      path = "movies/#{id}/reviews"
+      Movie.get path, options.merge(:page_limit => Movie.maximum_per_page) do |json|
+        SearchResult.new( :path => path, :api_options => options, :class => Review, :json => json, :start => "reviews" )
       end
     end
 

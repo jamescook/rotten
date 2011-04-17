@@ -4,8 +4,8 @@ describe Rotten::Movie do
   context "#cast" do
     before :each do
       simulate "movies/search", "search.json", :q => "There Will Be Blood"
-      @movie = Rotten::Movie.search("There Will Be Blood").pop
-      simulate "movies/#{@movie.id}/cast", "cast.json"
+      @movie = Rotten::Movie.search("There Will Be Blood")[-1]
+      simulate "movies/#{@movie.id}/cast", "cast.json", :page_limit => nil
     end
 
     context "sent :full" do
@@ -19,13 +19,13 @@ describe Rotten::Movie do
   context "#reviews" do
     before :each do
       simulate "movies/search", "search.json", :q => "There Will Be Blood"
-      @movie = Rotten::Movie.search("There Will Be Blood").pop
+      @movie = Rotten::Movie.search("There Will Be Blood")[-1]
       simulate "movies/#{@movie.id}/reviews", "reviews.json"
     end
 
     it "should return an array of Review" do
-      @movie.reviews.should be_an_instance_of(Array)
-      @movie.reviews.shift.should be_an_instance_of(Rotten::Review)
+      @movie.reviews.should be_an_instance_of(Rotten::SearchResult)
+      @movie.reviews[0].should be_an_instance_of(Rotten::Review)
     end
   end
 
@@ -35,7 +35,7 @@ describe Rotten::Movie do
     end
 
     it "should return an array" do
-      Rotten::Movie.dvd_releases.should be_an_instance_of(Array)
+      Rotten::Movie.dvd_releases.should be_an_instance_of(Rotten::SearchResult)
     end 
   end
 
@@ -45,7 +45,7 @@ describe Rotten::Movie do
     end
 
     it "should return an array" do
-      Rotten::Movie.in_theatres.should be_an_instance_of(Array)
+      Rotten::Movie.in_theatres.should be_an_instance_of(Rotten::SearchResult)
     end 
   end
   
@@ -55,7 +55,7 @@ describe Rotten::Movie do
     end
 
     it "should return an array" do
-      Rotten::Movie.opening.should be_an_instance_of(Array)
+      Rotten::Movie.opening.should be_an_instance_of(Rotten::SearchResult)
     end 
 
     it "should contain a movie" do
@@ -77,7 +77,7 @@ describe Rotten::Movie do
     end
 
     it "should return an array" do
-      Rotten::Movie.search("There Will Be Blood").should be_an_instance_of(Array)
+      Rotten::Movie.search("There Will Be Blood").should be_an_instance_of(Rotten::SearchResult)
     end 
 
     it "should contain a movie" do

@@ -1,6 +1,5 @@
 # Capture JSON responses and re-use them
 # Works with any cache store that accepts the "read" and "write" methods
-# TODO method_missing should hit the @store
 
 module Rotten
   autoload :SimpleCache, "rotten/simple_cache.rb"
@@ -21,5 +20,9 @@ module Rotten
       @store.write key, value
     end
     alias_method :set, :write
+
+    def method_missing sym, *args, &block
+      @store.send sym, *args, &block
+    end
   end
 end

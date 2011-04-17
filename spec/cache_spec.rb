@@ -46,9 +46,9 @@ describe Rotten::Cache do
     end
 
     it "should fetch from the cache" do
-      Rotten::Movie.search("There Will Be Blood").should be_an_instance_of(Array)
+      Rotten::Movie.search("There Will Be Blood").should be_an_instance_of(Rotten::SearchResult)
       json = JSON.parse(File.read( File.join(fixture_path, "search.json") ) )
-      YAML.load(Rotten::Movie.cache.cache_file)["http://api.rottentomatoes.com/api/public/v1.0/movies/search.json?apikey=1234567890&q=There%20Will%20Be%20Blood"]["movies"].should ==  json["movies"]
+      YAML.load(Rotten::Movie.cache.cache_file)["http://api.rottentomatoes.com/api/public/v1.0/movies/search.json?apikey=1234567890&q=There%20Will%20Be%20Blood&page_limit=50"]["movies"].should ==  json["movies"]
     end
   end
 end
