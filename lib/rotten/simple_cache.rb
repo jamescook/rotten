@@ -8,7 +8,7 @@ module Rotten
         @data = YAML.load_file @cache_file || {}
       else
         require "tempfile"
-        @cache_file = Tempfile.new "__rotten"
+        @cache_file = Tempfile.new("__rotten").path
         @data = YAML.load_file(@cache_file) || {}
       end
     end
